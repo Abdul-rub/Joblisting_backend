@@ -15,11 +15,24 @@ app.get('/',(req,res)=>{
 })
 
 //GET JOB
-app.get("/jobs", async(req,res)=>{
-    const jobs = await JobModel.find()
-    res.send(jobs)
+app.get("/jobs", async (req, res) => {
+    const { page, limit, sort, filter } = req.query;
+    console.log(page, limit, sort, filter);
+    if (filter != undefined) {
+      const Jobs = await JobModel.find({ role: filter })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort({ postedAt: sort });
+      res.send(Jobs);
+    } else {
+      const Jobs = await JobModel.find({})
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .sort({ postedAt: sort });
+      res.send(Jobs);
+    }
     // app.use("/jobs",jobs)
-})
+  });
 
 
 
